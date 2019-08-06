@@ -1,0 +1,113 @@
+version: '3.0'
+services:
+  haproxy:
+    container_name: 'haproxy'
+    image: 'haproxytech/haproxy-ubuntu'
+    links:
+      - "client-01"
+      - "client-02"
+      - "server-01"
+      - "server-02"
+    networks:
+      client-net: {
+        ipv4_address: 172.100.0.10
+      }
+      server-net: {
+        ipv4_address: 172.101.0.10
+      }
+    ports:
+      - "80"
+    restart: on-failure
+    volumes:
+      - "./haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg"
+
+  client-01:
+    container_name: 'client-01'
+    entrypoint: 'tail -f /dev/null'
+    image: 'ubuntu:latest'
+    networks:
+      client-net: {
+        ipv4_address: 172.100.0.11
+      }
+    ports:
+      - "10081:81"
+    restart: unless-stopped
+    volumes:
+      - "./client-01/:/dataX/"
+
+
+  client-02:
+    container_name: 'client-02'
+    entrypoint: 'tail -f /dev/null'
+    image: 'ubuntu:latest'
+    networks:
+      client-net: {
+        ipv4_address: 172.100.0.12
+      }
+    ports:
+      - "10082:82"
+    restart: unless-stopped
+    volumes:
+      - "./client-02/:/dataX/"
+
+
+  server-01:
+    container_name: 'server-01'
+    entrypoint: 'tail -f /dev/null'
+    image: 'ubuntu:latest'
+    networks:
+      server-net: {
+        ipv4_address: 172.101.0.11
+      }
+    ports:
+      - "20081:81"
+    restart: unless-stopped
+    volumes:
+      - "./server-01/:/dataX/"
+
+
+  server-02:
+    container_name: 'server-02'
+    entrypoint: 'tail -f /dev/null'
+    image: 'ubuntu:latest'
+    networks:
+      server-net: {
+        ipv4_address: 172.101.0.12
+      }
+    ports:
+      - "20082:82"
+    restart: unless-stopped
+    volumes:
+      - "./server-02/:/dataX/"
+
+
+
+
+networks:
+
+  client-net:
+    driver: bridge
+    driver_opts: {
+      com.docker.network.driver.mtu: 9216,
+      gateway: 172.100.0.10,
+      ip-range: 172.100.0.0/24
+    }
+#    internal: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.100.0.0/24"
+
+
+  server-net:
+    driver: bridge
+    driver_opts: {
+      com.docker.network.driver.mtu: 9216,
+      gateway: 172.101.0.10,
+      ip-range: 172.101.0.0/24
+    }
+#    internal: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.101.0.0/24"

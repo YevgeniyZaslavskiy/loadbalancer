@@ -1,0 +1,12 @@
+version: '2.0'
+services:
+  server-00:
+    container_name: 'server-00'
+    entrypoint: 'tail -f /dev/null'
+    image: 'server:latest'
+    build:
+      context: "."
+      dockerfile: "Dockerfile-server"
+    ports:
+      - "20081:80"
+    restart: "unless-stopped"
