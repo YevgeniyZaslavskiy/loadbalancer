@@ -1,0 +1,41 @@
+version: '2.0'
+services:
+  server-00:
+    container_name: 'server'
+    entrypoint: '/server-entrypoint.sh'
+    #entrypoint: 'tail -f /dev/null'
+    image: 'server:01'
+    #command: >
+    # /bin/bash -c "
+    #   tail -f /dev/null;
+    #   service nginx start;
+    #  "
+    build:
+      context: "."
+      dockerfile: "/home/gooduser/debug/loadbalancer/server/server:01/Dockerfile"
+    ports:
+      - "20081:80"
+    restart: "unless-stopped"
+    volumes:
+      - "./server-entrypoint.sh:/server-entrypoint.sh"
+
+  client-00:
+    container_name: 'client'
+    entrypoint: '/client-entrypoint.sh'
+    #entrypoint: 'tail -f /dev/null'
+    image: 'client:01'
+    #command: >
+    # /bin/bash -c "
+    #  tail -f /dev/null;
+    #  curl -v http://192.168.0.103:20081 >> /var/opt/log.txt;
+    # "
+    build:
+      context: "."
+      dockerfile: "/home/gooduser/debug/loadbalancer/client/client:01/Dockerfile"
+    ports:
+      - "20082:80"
+    restart: "unless-stopped"
+    volumes:
+      - "./client-entrypoint.sh:/client-entrypoint.sh"
+      - "./logs:/var/opt/dump"
+
