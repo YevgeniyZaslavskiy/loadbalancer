@@ -2,7 +2,6 @@ version: '2.0'
 services:
   server-00:
     container_name: 'server'
-    entrypoint: 'tail -f /dev/null'
     image: 'server:01'
     build:
       context: "."

@@ -1,0 +1,13 @@
+version: '3'
+services:
+  client-00:
+    container_name: 'client'
+    environment:
+      SERVER: "192.168.0.103:20081"
+    image: 'client:01'
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    ports:
+      - "20082:80"
+    restart: "unless-stopped"

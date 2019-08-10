@@ -1,0 +1,29 @@
+version: '2.0'
+
+
+services:
+
+  server-00:
+    container_name: 'server'
+    build:
+      context: "../../server/server-01/"
+      dockerfile: "Dockerfile"
+    image: 'server:01'
+    ports:
+      - "20081:80"
+    restart: "unless-stopped"
+
+  client-00:
+    container_name: 'client'
+    build:
+      context: "../../client/client-01/"
+      dockerfile: "Dockerfile"
+    image: 'client:01'
+    ports:
+      - "20082:80"
+    restart: "unless-stopped"
+    volumes:
+      - "./dump/:/var/opt/dump/:rw"
+    links:
+      - "server-00"
+
