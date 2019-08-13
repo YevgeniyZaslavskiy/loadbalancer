@@ -1,6 +1,7 @@
 #!/bin/bash
 
-curl -v http://${SERVER} -o "/var/opt/dump/log-$(date +'%Y-%m-%d %H:%M:%S').txt"
+sleep 1
+curl -v http://${SERVER} -o "/var/opt/dump/log-${CLIENT}-$(date +'%Y-%m-%d %H:%M:%S').txt"
 tail -f /dev/null
 #bash
 

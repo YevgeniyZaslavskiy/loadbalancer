@@ -1,0 +1,132 @@
+version: '3'
+
+
+services:
+
+
+  haproxy:
+    container_name: 'haproxy'
+    build:
+      context: "../../gate/haproxy-01/"
+      dockerfile: "Dockerfile"
+    image: 'haproxytech/haproxy-ubuntu'
+    links:
+      - "server-01"
+      - "server-02"
+      - "client-01"
+      - "client-02"
+
+    networks:
+      server-net: {
+        ipv4_address: 172.100.0.10
+      }
+      client-net: {
+        ipv4_address: 172.101.0.10
+      }
+    ports:
+      - "80"
+    restart: on-failure
+    volumes:
+      - "../../gate/haproxy-01/config:/etc/haproxy/"
+
+  server-01:
+    container_name: 'server-01'
+    build:
+      context: "../../server/server-01/"
+      dockerfile: "Dockerfile"
+    image: 'server:01'
+    networks:
+      server-net: {
+        ipv4_address: 172.100.0.11
+      }
+    ports:
+      - "20081:80"
+    restart: "unless-stopped"
+
+  server-02:
+    container_name: 'server-02'
+    build:
+      context: "../../server/server-01/"
+      dockerfile: "Dockerfile"
+    image: 'server:01'
+    networks:
+      server-net: {
+        ipv4_address: 172.100.0.12
+      }
+    ports:
+      - "20082:80"
+    restart: "unless-stopped"
+
+  client-01:
+    container_name: 'client-01'
+    build:
+      context: "../../client/client-01/"
+      dockerfile: "Dockerfile"
+    image: 'client:01'
+    networks:
+      client-net: {
+        ipv4_address: 172.101.0.11
+      }
+    environment:
+      SERVER: "172.101.0.10:80"
+      CLIENT: "01"
+    ports:
+      - "10081:80"
+    restart: "unless-stopped"
+    volumes:
+      - "./dump/:/var/opt/dump/:rw"
+    links:
+      - "server-01"
+      - "server-02"
+
+  client-02:
+    container_name: 'client-02'
+    build:
+      context: "../../client/client-01/"
+      dockerfile: "Dockerfile"
+    image: 'client:01'
+    networks:
+      client-net: {
+        ipv4_address: 172.101.0.12
+      }
+    environment:
+      SERVER: "172.101.0.10:80"
+      CLIENT: "02"
+    ports:
+      - "10082:80"
+    restart: "unless-stopped"
+    volumes:
+      - "./dump/:/var/opt/dump/:rw"
+    links:
+      - "server-01"
+      - "server-02"
+
+networks:
+
+  client-net:
+    driver: bridge
+    driver_opts: {
+      com.docker.network.driver.mtu: 9216,
+      gateway: 172.101.0.10,
+      ip-range: 172.101.0.0/24
+    }
+#    internal: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.101.0.0/24"
+
+
+  server-net:
+    driver: bridge
+    driver_opts: {
+      com.docker.network.driver.mtu: 9216,
+      gateway: 172.100.0.10,
+      ip-range: 172.100.0.0/24
+    }
+#    internal: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.100.0.0/24"
+
