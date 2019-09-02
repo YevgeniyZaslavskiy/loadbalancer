@@ -5,10 +5,10 @@ services:
 
 
   haproxy:
-    container_name: 'haproxy'
+#    container_name: 'haproxy'
     build:
       context: "../../gate/haproxy-01/"
-      dockerfile: "Dockerfile"
+#      dockerfile: "Dockerfile"
     image: 'haproxytech/haproxy-ubuntu'
     links:
       - "server-01"
@@ -30,7 +30,7 @@ services:
       - "../../gate/haproxy-01/config:/etc/haproxy/"
 
   server-01:
-    container_name: 'server-01'
+#    container_name: 'server-01'
     build:
       context: "../../server/server-01/"
       dockerfile: "Dockerfile"
@@ -44,7 +44,7 @@ services:
     restart: "unless-stopped"
 
   server-02:
-    container_name: 'server-02'
+#    container_name: 'server-02'
     build:
       context: "../../server/server-01/"
       dockerfile: "Dockerfile"
@@ -58,7 +58,7 @@ services:
     restart: "unless-stopped"
 
   client-01:
-    container_name: 'client-01'
+#    container_name: 'client-01'
     build:
       context: "../../client/client-01/"
       dockerfile: "Dockerfile"
@@ -80,7 +80,7 @@ services:
       - "server-02"
 
   client-02:
-    container_name: 'client-02'
+#    container_name: 'client-02'
     build:
       context: "../../client/client-01/"
       dockerfile: "Dockerfile"
