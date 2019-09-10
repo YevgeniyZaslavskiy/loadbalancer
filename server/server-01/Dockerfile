@@ -7,4 +7,6 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y nginx
 COPY ./entrypoint.sh /ep.sh
 RUN chmod a+x /ep.sh
 
+RUN mkdir -p /var/www/html/privacy/
+
 CMD [ "/ep.sh", "" ]

@@ -4,12 +4,12 @@ version: '3'
 services:
 
 
-  haproxy:
+  java-balancer:
 #    container_name: 'haproxy'
     build:
-      context: "../../gate/haproxy-01/"
-#      dockerfile: "Dockerfile"
-    image: 'haproxytech/haproxy-ubuntu'
+      context: "../../gate/java-balancer-01/"
+      dockerfile: "Dockerfile"
+    image: 'balancer:02'
     links:
       - "server-01"
       - "server-02"
@@ -26,8 +26,8 @@ services:
     ports:
       - "80"
     restart: on-failure
-    volumes:
-      - "../../gate/haproxy-01/config:/etc/haproxy/"
+#    volumes:
+#      - "../../gate/haproxy-01/config:/etc/haproxy/"
 
   server-01:
 #    container_name: 'server-01'
